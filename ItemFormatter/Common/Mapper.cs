@@ -5,87 +5,13 @@ using ItemFormatter.Models;
 
 namespace ItemFormatter.Common
 {
-    public class LokiHelper
-    {
-        public ILookup<string, string> EffectTypeLookup { get; }
-        public ILookup<string, string> ResistNameLookup { get; }
-        public ILookup<string, string> SkillNameLookup { get; }
-
-        public LokiHelper(string bonusListPath)
-        {
-            static Tuple<string, string, string> Create(Bonus b)
-            {
-                var englishName = b.Name.FirstOrDefault();
-                var englishMythicName = b.MythicName.FirstOrDefault();
-                var englishKortName = b.KortName;
-
-                var name = englishMythicName != null ? englishMythicName.Text : englishName.Text;
-                var kortName = englishKortName ?? englishName.Text;
-
-                return Tuple.Create(b.Type, name, kortName);
-            }
-
-            var bonusList = XmlHelper.DeserializeFromXmlFile<BonusList>(bonusListPath);
-
-            EffectTypeLookup = bonusList.Bonus
-                .Where(b => b.Type == "Statistic" || b.Type == "Resistance" || b.Type == "Skill")
-                .Select(Create)
-                .ToLookup(t => t.Item2, t => t.Item1);
-
-            ResistNameLookup = bonusList.Bonus
-                .Where(b => b.Type == "Resistance")
-                .ToLookup(t => t.Name.First().Text, t => t.KortName);
-
-            SkillNameLookup = bonusList.Bonus
-                .Where(b => b.Type == "Skill")
-                .Select(Create)
-                .ToLookup(t => t.Item2, t => t.Item3);
-        }
-    }
-
     public class Mapper
     {
-        private readonly ILookup<string, string> _effectTypeLookup;
-        private readonly ILookup<string, string> _resistNameLookup;
-        private readonly ILookup<string, string> _skillNameLookup;
+        private readonly BonusListHelper _bonusListHelper;
 
-        public Mapper(string bonusListPath)
+        public Mapper(BonusListHelper bonusListHelper)
         {
-            static Tuple<string, string, string> Create(Bonus b)
-            {
-                var englishName = b.Name.FirstOrDefault();
-                var englishMythicName = b.MythicName.FirstOrDefault();
-                var englishKortName = b.KortName;
-
-                var name = englishMythicName != null ? englishMythicName.Text : englishName.Text;
-                var kortName = englishKortName ?? englishName.Text;
-
-                return Tuple.Create(b.Type, name, kortName);
-            }
-
-            var bonusList = XmlHelper.DeserializeFromXmlFile<BonusList>(bonusListPath);
-
-            _effectTypeLookup = bonusList.Bonus
-                .Where(b => b.Type == "Statistic" || b.Type == "Resistance" || b.Type == "Skill")
-                .Select(Create)
-                .ToLookup(t => t.Item2, t => t.Item1);
-
-            _resistNameLookup = bonusList.Bonus
-                .Where(b => b.Type == "Resistance")
-                .ToLookup(t => t.Name.First().Text, t => t.KortName);
-
-            _skillNameLookup = bonusList.Bonus
-                .Where(b => b.Type == "Skill")
-                .Select(Create)
-                .ToLookup(t => t.Item2, t => t.Item3);
-        }
-
-        public void SaveScItem(string source, string savePath)
-        {
-            var valueTuple = GetScItem(source);
-            var scItem = valueTuple.ScItem;
-            var fileName = GetFilename(savePath, valueTuple.HouseNumber, scItem.ItemName);
-            XmlHelper.SerializeToXmlFile(scItem, fileName);
+            _bonusListHelper = bonusListHelper;
         }
 
         public void SaveScItem(string source, string savePath)
@@ -110,7 +36,7 @@ namespace ItemFormatter.Common
             var itemName = lines.First();
             var houseNumber = lines.Last();
 
-            var scItem = new ScItem {ItemName = itemName.TrimEnd(" x 1")};
+            var scItem = new ScItem {ItemName = itemName.TrimEnd(" x 1", StringComparison.OrdinalIgnoreCase)};
 
             var contentLines = lines.Skip(1)
                 .Take(lines.Length - 2)
@@ -121,7 +47,7 @@ namespace ItemFormatter.Common
             {
                 var valueTuple = parseLine(contentLine);
 
-                var type = _effectTypeLookup[valueTuple.Effect].First();
+                var type = _bonusListHelper.EffectTypeLookup[valueTuple.Effect].First();
                 var mappedType = MapType(type);
                 var effect = MapEffect(type, valueTuple.Effect);
 
@@ -167,17 +93,15 @@ namespace ItemFormatter.Common
         {
             if (IsResist(name))
             {
-                return _resistNameLookup[name].First();
+                return _bonusListHelper.ResistNameLookup[name].First();
             }
 
-            return type == "Statistic" ? name : _skillNameLookup[name].First();
+            return type == "Statistic" ? name : _bonusListHelper.SkillNameLookup[name].First();
         }
 
         private bool IsResist(string name)
         {
-            return _resistNameLookup.Contains(name);
+            return _bonusListHelper.ResistNameLookup.Contains(name);
         }
-
-      
     }
 }

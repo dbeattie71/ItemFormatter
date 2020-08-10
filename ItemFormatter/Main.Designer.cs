@@ -36,11 +36,15 @@
             this.uxImportItemButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.uxChatLogPathLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // uxSaveItemButton
             // 
-            this.uxSaveItemButton.Location = new System.Drawing.Point(12, 110);
+            this.uxSaveItemButton.Location = new System.Drawing.Point(0, 43);
             this.uxSaveItemButton.Name = "uxSaveItemButton";
             this.uxSaveItemButton.Size = new System.Drawing.Size(143, 29);
             this.uxSaveItemButton.TabIndex = 0;
@@ -51,7 +55,7 @@
             // uxSavePathLinkLabel
             // 
             this.uxSavePathLinkLabel.AutoSize = true;
-            this.uxSavePathLinkLabel.Location = new System.Drawing.Point(12, 78);
+            this.uxSavePathLinkLabel.Location = new System.Drawing.Point(0, 20);
             this.uxSavePathLinkLabel.Name = "uxSavePathLinkLabel";
             this.uxSavePathLinkLabel.Size = new System.Drawing.Size(145, 20);
             this.uxSavePathLinkLabel.TabIndex = 3;
@@ -82,7 +86,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 58);
+            this.label2.Location = new System.Drawing.Point(0, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 20);
             this.label2.TabIndex = 6;
@@ -90,7 +94,7 @@
             // 
             // uxImportItemButton
             // 
-            this.uxImportItemButton.Location = new System.Drawing.Point(12, 224);
+            this.uxImportItemButton.Location = new System.Drawing.Point(0, 43);
             this.uxImportItemButton.Name = "uxImportItemButton";
             this.uxImportItemButton.Size = new System.Drawing.Size(143, 30);
             this.uxImportItemButton.TabIndex = 7;
@@ -101,7 +105,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 171);
+            this.label4.Location = new System.Drawing.Point(0, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(98, 20);
             this.label4.TabIndex = 9;
@@ -110,7 +114,7 @@
             // uxChatLogPathLinkLabel
             // 
             this.uxChatLogPathLinkLabel.AutoSize = true;
-            this.uxChatLogPathLinkLabel.Location = new System.Drawing.Point(13, 191);
+            this.uxChatLogPathLinkLabel.Location = new System.Drawing.Point(0, 20);
             this.uxChatLogPathLinkLabel.Name = "uxChatLogPathLinkLabel";
             this.uxChatLogPathLinkLabel.Size = new System.Drawing.Size(169, 20);
             this.uxChatLogPathLinkLabel.TabIndex = 10;
@@ -118,21 +122,43 @@
             this.uxChatLogPathLinkLabel.Text = "uxChatLogPathLinkLabel";
             this.uxChatLogPathLinkLabel.Click += new System.EventHandler(this.uxChatLogPathLinkLabel_Click);
             // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.uxImportItemButton);
+            this.panel1.Controls.Add(this.uxChatLogPathLinkLabel);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Location = new System.Drawing.Point(13, 152);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(825, 84);
+            this.panel1.TabIndex = 11;
+            // 
+            // panel2
+            // 
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.uxSaveItemButton);
+            this.panel2.Controls.Add(this.uxSavePathLinkLabel);
+            this.panel2.Controls.Add(this.label2);
+            this.panel2.Location = new System.Drawing.Point(12, 62);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(825, 84);
+            this.panel2.TabIndex = 12;
+            // 
             // Main
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(930, 386);
-            this.Controls.Add(this.uxChatLogPathLinkLabel);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.uxImportItemButton);
-            this.Controls.Add(this.label2);
+            this.ClientSize = new System.Drawing.Size(1127, 480);
+            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.uxBonusesPathLinkLabel);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.uxSavePathLinkLabel);
-            this.Controls.Add(this.uxSaveItemButton);
             this.Name = "Main";
             this.Text = "Item Formatter";
             this.Load += new System.EventHandler(this.Main_Load);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -148,6 +174,8 @@
         private System.Windows.Forms.Button uxImportItemButton;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.LinkLabel uxChatLogPathLinkLabel;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 

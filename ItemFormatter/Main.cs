@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -72,7 +74,8 @@ namespace ItemFormatter
                 RestoreDirectory = true
             };
 
-            if (openFileDialog.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(openFileDialog.FileName)) return;
+            if (openFileDialog.ShowDialog() != DialogResult.OK ||
+                string.IsNullOrWhiteSpace(openFileDialog.FileName)) return;
 
             uxBonusesPathLinkLabel.Text = openFileDialog.FileName;
             Properties.Settings.Default["BonusesPath"] = openFileDialog.FileName;
@@ -100,7 +103,8 @@ namespace ItemFormatter
                 RestoreDirectory = true
             };
 
-            if (openFileDialog.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(openFileDialog.FileName)) return;
+            if (openFileDialog.ShowDialog() != DialogResult.OK ||
+                string.IsNullOrWhiteSpace(openFileDialog.FileName)) return;
 
             uxChatLogPathLinkLabel.Text = openFileDialog.FileName;
             Properties.Settings.Default["ChatLogPath"] = openFileDialog.FileName;
@@ -111,14 +115,13 @@ namespace ItemFormatter
         {
             try
             {
-                var mapper = new Mapper(Properties.Settings.Default["BonusesPath"].ToString());
+                var bonusListHelper = new BonusListHelper(Properties.Settings.Default["BonusesPath"].ToString());
+                var mapper = new Mapper(bonusListHelper);
 
                 var clipBoard = getClipboard();
                 //validate
 
                 mapper.SaveScItem(clipBoard, Properties.Settings.Default["SavePath"].ToString());
-
-                //
             }
             catch (Exception exception)
             {
@@ -131,16 +134,15 @@ namespace ItemFormatter
             try
             {
                 var chatLogParser = new ChatLogParser();
-                var mostRecentItem = chatLogParser.GetMostRecentItem(Properties.Settings.Default["ChatLogPath"].ToString());
+                var mostRecentItem =
+                    chatLogParser.GetMostRecentItem(Properties.Settings.Default["ChatLogPath"].ToString());
 
-                var mapper = new Mapper(Properties.Settings.Default["BonusesPath"].ToString());
+                var bonusListHelper = new BonusListHelper(Properties.Settings.Default["BonusesPath"].ToString());
+                var mapper = new Mapper(bonusListHelper);
 
-                var clipBoard = getClipboard();
                 //validate
 
-                mapper.SaveScItem(clipBoard, Properties.Settings.Default["SavePath"].ToString());
-
-                //
+                mapper.SaveScItem(mostRecentItem, Properties.Settings.Default["SavePath"].ToString());
             }
             catch (Exception exception)
             {
@@ -148,6 +150,27 @@ namespace ItemFormatter
             }
         }
 
-        
+        //private void uxSavePathLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        //{
+        //    OpenFolder(uxSavePathLinkLabel.Text);
+        //}
+
+        //private void OpenFolder(string folderPath)
+        //{
+        //    if (Directory.Exists(folderPath))
+        //    {
+        //        ProcessStartInfo startInfo = new ProcessStartInfo
+        //        {
+        //            Arguments = folderPath,
+        //            FileName = "explorer.exe"
+        //        };
+
+        //        Process.Start(startInfo);
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show($"{folderPath} Directory does not exist!");
+        //    }
+        //}
     }
 }
