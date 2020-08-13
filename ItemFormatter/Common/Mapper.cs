@@ -76,7 +76,15 @@ namespace ItemFormatter.Common
         private (string Effect, string Value) parseLine(string line)
         {
             var split = line.Split(':', StringSplitOptions.RemoveEmptyEntries);
-            return (split[0].Trim(), split[1].Trim());
+
+            var effect = split[0];
+
+            if (effect == "Shields")
+            {
+                effect = "Shield";
+            }
+
+            return (effect.Trim(), split[1].Trim());
         }
 
         private string MapType(string effect)

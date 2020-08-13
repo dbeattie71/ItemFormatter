@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace ItemFormatter
+namespace ItemFormatter.Common
 {
     public static class XmlHelper
     {

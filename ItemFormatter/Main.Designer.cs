@@ -147,7 +147,7 @@
             // Main
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(1127, 480);
+            this.ClientSize = new System.Drawing.Size(850, 248);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.uxBonusesPathLinkLabel);
