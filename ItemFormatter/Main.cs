@@ -1,20 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Serialization;
 using ItemFormatter.Common;
-using ItemFormatter.Models;
-using Microsoft.Extensions.Options;
 
 namespace ItemFormatter
 {
@@ -31,20 +19,7 @@ namespace ItemFormatter
             InitializeComponent();
         }
 
-        private string getClipboard()
-        {
-            string result = null;
-            var iData = Clipboard.GetDataObject();
 
-            if (iData.GetDataPresent(DataFormats.Text))
-            {
-                result = iData.GetData(DataFormats.Text) as string;
-            }
-
-            Clipboard.Clear();
-
-            return result;
-        }
 
         private void Main_Load(object sender, EventArgs e)
         {
@@ -64,7 +39,7 @@ namespace ItemFormatter
                 : chatLogPath;
         }
 
-        private void uxBonusesPathLinkLabel_Click(object sender, EventArgs e)
+        private void uxBonusesPathButton_Click(object sender, EventArgs e)
         {
             using var openFileDialog = new OpenFileDialog
             {
@@ -82,18 +57,12 @@ namespace ItemFormatter
             Properties.Settings.Default.Save();
         }
 
-        private void uxSavePathLinkLabel_Click(object sender, EventArgs e)
+        private void uxBonusesPathLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            using var folderBrowserDialog = new FolderBrowserDialog();
-            var result = folderBrowserDialog.ShowDialog();
-
-            if (result != DialogResult.OK || string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath)) return;
-            uxSavePathLinkLabel.Text = folderBrowserDialog.SelectedPath;
-            Properties.Settings.Default["SavePath"] = folderBrowserDialog.SelectedPath;
-            Properties.Settings.Default.Save();
+            OpenFolder(Path.GetDirectoryName(uxBonusesPathLinkLabel.Text));
         }
 
-        private void uxChatLogPathLinkLabel_Click(object sender, EventArgs e)
+        private void uxChatLogButton_Click(object sender, EventArgs e)
         {
             using var openFileDialog = new OpenFileDialog
             {
@@ -111,6 +80,27 @@ namespace ItemFormatter
             Properties.Settings.Default.Save();
         }
 
+        private void uxChatLogPathLinkLabel_Click(object sender, EventArgs e)
+        {
+            OpenFolder(uxChatLogPathLinkLabel.Text);
+        }
+
+        private void uxSavePathButton_Click(object sender, EventArgs e)
+        {
+            using var folderBrowserDialog = new FolderBrowserDialog();
+            var result = folderBrowserDialog.ShowDialog();
+
+            if (result != DialogResult.OK || string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath)) return;
+            uxSavePathLinkLabel.Text = folderBrowserDialog.SelectedPath;
+            Properties.Settings.Default["SavePath"] = folderBrowserDialog.SelectedPath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void uxSavePathLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            OpenFolder(uxSavePathLinkLabel.Text);
+        }
+
         private void uxSaveItemButton_Click(object sender, EventArgs e)
         {
             try
@@ -118,7 +108,8 @@ namespace ItemFormatter
                 var bonusListHelper = new BonusListHelper(Properties.Settings.Default["BonusesPath"].ToString());
                 var mapper = new Mapper(bonusListHelper);
 
-                var clipBoard = getClipboard();
+                var clipBoard = GetClipboard();
+
                 //validate
 
                 mapper.SaveScItem(clipBoard, Properties.Settings.Default["SavePath"].ToString());
@@ -127,6 +118,21 @@ namespace ItemFormatter
             {
                 MessageBox.Show(exception.Message);
             }
+        }
+
+        private string GetClipboard()
+        {
+            string result = null;
+            var iData = Clipboard.GetDataObject();
+
+            if (iData.GetDataPresent(DataFormats.Text))
+            {
+                result = iData.GetData(DataFormats.Text) as string;
+            }
+
+            Clipboard.Clear();
+
+            return result;
         }
 
         private void uxImportItemButton_Click(object sender, EventArgs e)
@@ -150,27 +156,24 @@ namespace ItemFormatter
             }
         }
 
-        //private void uxSavePathLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        //{
-        //    OpenFolder(uxSavePathLinkLabel.Text);
-        //}
+        private void OpenFolder(string folderPath)
+        {
+            var path = Path.GetDirectoryName(folderPath);
 
-        //private void OpenFolder(string folderPath)
-        //{
-        //    if (Directory.Exists(folderPath))
-        //    {
-        //        ProcessStartInfo startInfo = new ProcessStartInfo
-        //        {
-        //            Arguments = folderPath,
-        //            FileName = "explorer.exe"
-        //        };
+            if (Directory.Exists(folderPath))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    Arguments = folderPath,
+                    FileName = "explorer.exe"
+                };
 
-        //        Process.Start(startInfo);
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show($"{folderPath} Directory does not exist!");
-        //    }
-        //}
+                Process.Start(startInfo);
+            }
+            else
+            {
+                MessageBox.Show($"{folderPath} Directory does not exist!");
+            }
+        }
     }
 }
