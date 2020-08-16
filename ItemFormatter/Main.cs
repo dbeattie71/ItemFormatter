@@ -19,8 +19,6 @@ namespace ItemFormatter
             InitializeComponent();
         }
 
-
-
         private void Main_Load(object sender, EventArgs e)
         {
             var bonusesPath = Properties.Settings.Default["BonusesPath"].ToString();
