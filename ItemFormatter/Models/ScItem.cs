@@ -95,7 +95,7 @@ namespace ItemFormatter.Models
             Associate = new Associate {IsParent = "0"};
 
             DropItem = new DropItem {Slot = new List<Slot>()};
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 11; i++)
             {
                 DropItem.Slot.Add(new Slot {Number = i.ToString()});
             }
