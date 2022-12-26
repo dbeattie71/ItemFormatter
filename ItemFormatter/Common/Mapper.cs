@@ -31,7 +31,7 @@ namespace ItemFormatter.Common
 
         private (string HouseNumber, ScItem ScItem) GetScItem(string source)
         {
-            var lines = parseLines(source);
+            var lines = ParseLines(source);
 
             var itemName = lines.First();
             var houseNumber = lines.Last();
@@ -45,9 +45,10 @@ namespace ItemFormatter.Common
             var count = 0;
             foreach (var contentLine in contentLines)
             {
-                var valueTuple = parseLine(contentLine);
+                var valueTuple = ParseLine(contentLine);
 
-                var type = _bonusListHelper.EffectTypeLookup[valueTuple.Effect].First();
+
+                var type = _bonusListHelper.Lookup(valueTuple.Effect);
                 var mappedType = MapType(type);
                 var effect = MapEffect(type, valueTuple.Effect);
 
@@ -65,7 +66,7 @@ namespace ItemFormatter.Common
             return (houseNumber, scItem);
         }
 
-        private string[] parseLines(string source)
+        private string[] ParseLines(string source)
         {
             return source.Split(
                 new[] {"\r\n", "\r", "\n"},
@@ -73,7 +74,7 @@ namespace ItemFormatter.Common
             );
         }
 
-        private (string Effect, string Value) parseLine(string line)
+        private (string Effect, string Value) ParseLine(string line)
         {
             var split = line.Split(':', StringSplitOptions.RemoveEmptyEntries);
 
@@ -93,7 +94,8 @@ namespace ItemFormatter.Common
             {
                 "Statistic" => "Stat",
                 "Resistance" => "Resist",
-                _ => "Skill"
+                "Skill" => "Skill",
+                _ => "Other Bonus"
             };
         }
 
@@ -104,7 +106,20 @@ namespace ItemFormatter.Common
                 return _bonusListHelper.ResistNameLookup[name].First();
             }
 
-            return type == "Statistic" ? name : _bonusListHelper.SkillNameLookup[name].First();
+            if (type == "Statistic")
+            {
+                return name;
+            }
+            else if (type == "Skill")
+            {
+                return _bonusListHelper.SkillNameLookup[name].First();
+            }
+            else if (type == "TOA Bonus")
+            {
+                return _bonusListHelper.Lookup(name);
+            }
+
+            return null;
         }
 
         private bool IsResist(string name)

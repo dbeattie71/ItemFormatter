@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using ItemFormatter.Models;
 
 namespace ItemFormatter.Common
@@ -9,6 +11,13 @@ namespace ItemFormatter.Common
         public ILookup<string, string> EffectTypeLookup { get; }
         public ILookup<string, string> ResistNameLookup { get; }
         public ILookup<string, string> SkillNameLookup { get; }
+
+        public Dictionary<string, string> _effectMappings = new Dictionary<string, string>
+        {
+            {"Power Pool", "power pool"},
+            {"Bonus to casting speed", "casting speed"},
+            {"Spell Range", "spell range"},
+        };
 
         public BonusListHelper(string bonusListPath)
         {
@@ -27,7 +36,13 @@ namespace ItemFormatter.Common
             var bonusList = XmlHelper.DeserializeFromXmlFile<BonusList>(bonusListPath);
 
             EffectTypeLookup = bonusList.Bonus
-                .Where(b => b.Type == "Statistic" || b.Type == "Resistance" || b.Type == "Skill")
+                .Where(
+                    b => b.Type == "Statistic" ||
+                         b.Type == "Resistance" ||
+                         b.Type == "Skill" ||
+                         b.Type == "Cap Increase" ||
+                         b.Type == "TOA Bonus"
+                )
                 .Select(Create)
                 .ToLookup(t => t.Item2, t => t.Item1);
 
@@ -39,6 +54,16 @@ namespace ItemFormatter.Common
                 .Where(b => b.Type == "Skill")
                 .Select(Create)
                 .ToLookup(t => t.Item2, t => t.Item3);
+        }
+
+        public string Lookup(string effect)
+        {
+            if (_effectMappings.ContainsKey(effect))
+            {
+                return _effectMappings[effect];
+            }
+
+            return EffectTypeLookup[effect].First();
         }
     }
 }
